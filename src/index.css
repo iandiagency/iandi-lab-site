@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================
+   IANDI LAB — GRID SYSTEM
+   ============================ */
+
+@layer base {
+  body {
+    @apply bg-black text-white font-inter antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-light tracking-tight;
+  }
+}
+
+/* ============================
+   SECTION SYSTEM
+   ============================ */
+
+@layer components {
+  /* Container padrão */
+  .page-container {
+    @apply max-w-[1100px] mx-auto;
+  }
+
+  /* Secção padrão */
+  .section {
+    @apply py-16 md:py-24 px-6 md:px-20;
+  }
+
+  /* Secção mais densa */
+  .section-tight {
+    @apply py-12 md:py-16 px-6 md:px-20;
+  }
+
+  /* Grid consultivo */
+  .grid-consulting {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20;
+  }
+
+  /* Grid de cards */
+  .grid-cards {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-8;
+  }
+
+  /* CTA consultivo (não e-commerce) */
+  .cta-consulting {
+    @apply inline-flex text-sm font-medium text-gray-300 border-b border-gray-500/40 pb-1 transition hover:text-white hover:border-white;
+  }
+}
+
+/* ============================
+   ANCHOR OFFSET (NAVBAR FIXO)
+   ============================ */
+
+section[id] {
+  scroll-margin-top: 96px;
+}
