@@ -2,8 +2,12 @@ import CTA from "@/components/CTA";
 
 export default function Hero() {
   return (
-    <section id="hero" className="pt-48 md:pt-56 pb-28">
+    <section
+      id="hero"
+      className="relative pt-48 md:pt-56 pb-32"
+    >
       <div className="max-w-[1200px] mx-auto px-6">
+
         {/* LEFT / MANIFESTO */}
         <div className="max-w-xl">
           <p className="text-[11px] tracking-[0.35em] text-red-500 mb-8">
@@ -19,8 +23,8 @@ export default function Hero() {
           </h1>
 
           <p className="text-gray-400 text-base md:text-lg leading-relaxed mb-12">
-            A maior parte das marcas não cresce por falta de método. Eliminamos
-            ineficiências e instalamos sistemas de aquisição que funcionam.
+            A maior parte das marcas não cresce por falta de método.
+            Eliminamos ineficiências e instalamos sistemas de aquisição que funcionam.
           </p>
 
           <p className="text-[11px] tracking-[0.35em] text-gray-500 mb-14">
@@ -30,8 +34,8 @@ export default function Hero() {
           <CTA href="#contact" />
         </div>
 
-        {/* RIGHT / SUPPORTING BLOCKS */}
-        <div className="mt-24 md:mt-0 md:absolute md:top-[14.5rem] md:right-[max(1.5rem,calc((100vw-1200px)/2+1.5rem))]">
+        {/* RIGHT — DESKTOP ONLY */}
+        <div className="hidden md:block absolute top-[14.5rem] right-[max(1.5rem,calc((100vw-1200px)/2+1.5rem))]">
           <div className="grid gap-8 max-w-sm">
             {[
               {
@@ -56,10 +60,10 @@ export default function Hero() {
             ))}
           </div>
         </div>
-      </div>
 
-      {/* NOTE: needed so absolute block doesn't overlap next section on desktop */}
-      <div className="hidden md:block h-[18rem]" />
+        {/* Spacer para desktop */}
+        <div className="hidden md:block h-[20rem]" />
+      </div>
     </section>
   );
 }
