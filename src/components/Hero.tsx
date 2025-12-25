@@ -4,11 +4,11 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative pt-48 md:pt-56 pb-32"
+      className="relative z-10 pt-48 md:pt-56 pb-32"
     >
       <div className="max-w-[1200px] mx-auto px-6">
 
-        {/* LEFT / MANIFESTO */}
+        {/* LEFT */}
         <div className="max-w-xl">
           <p className="text-[11px] tracking-[0.35em] text-red-500 mb-8">
             A VERDADE QUE NINGUÉM TE DIZ
@@ -34,8 +34,8 @@ export default function Hero() {
           <CTA href="#contact" />
         </div>
 
-        {/* RIGHT — DESKTOP ONLY */}
-        <div className="hidden md:block absolute top-[14.5rem] right-[max(1.5rem,calc((100vw-1200px)/2+1.5rem))]">
+        {/* RIGHT (desktop only) */}
+        <div className="hidden md:block absolute top-[16rem] right-[max(1.5rem,calc((100vw-1200px)/2+1.5rem))] z-0">
           <div className="grid gap-8 max-w-sm">
             {[
               {
@@ -61,7 +61,7 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Spacer para desktop */}
+        {/* spacer */}
         <div className="hidden md:block h-[20rem]" />
       </div>
     </section>

@@ -16,7 +16,7 @@ export default function CTA({ href, label = "Agendar diagnóstico" }: CTAProps) 
         hover:border-white
         hover:bg-white hover:text-black
         pointer-events-auto
-        z-20
+        z-50
       "
     >
       <span className="relative z-10">{label}</span>
