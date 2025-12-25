@@ -4,13 +4,13 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative overflow-visible pt-44 pb-28"
+      className="pt-44 pb-28"
     >
-      <div className="max-w-[1200px] mx-auto px-6 relative z-10">
+      <div className="max-w-[1200px] mx-auto px-6">
 
-        {/* LEFT */}
+        {/* TEXTO */}
         <div className="max-w-xl">
-          <p className="text-[11px] tracking-[0.35em] text-red-500 mb-8">
+          <p className="text-[11px] tracking-[0.35em] text-gray-500 mb-8">
             A VERDADE QUE NINGUÉM TE DIZ
           </p>
 
@@ -34,13 +34,13 @@ export default function Hero() {
           <CTA href="#contact" />
         </div>
 
-        {/* RIGHT — DESKTOP ONLY */}
-        <div className="hidden md:block absolute top-0 right-0">
+        {/* CARDS — APENAS DESKTOP */}
+        <div className="hidden md:block mt-20">
           <div className="grid gap-8 max-w-sm">
             <div className="border border-white/10 p-6">
               <h3 className="text-sm mb-3">Eficiência Estrutural</h3>
               <p className="text-gray-400 text-sm">
-                Eliminamos fricções, perdas e inconsistências.
+                Eliminamos fricções e inconsistências.
               </p>
             </div>
             <div className="border border-white/10 p-6">
