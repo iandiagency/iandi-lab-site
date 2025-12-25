@@ -1,48 +1,45 @@
 export default function ModelsOfEngagement() {
   return (
-    <section id="models" className="section border-t border-white/10">
-      <div className="page-container">
+    <section className="py-28">
+      <div className="max-w-[1200px] mx-auto px-6 space-y-14">
 
-        <h2 className="text-2xl md:text-3xl mb-4 max-w-3xl">
-          Modelos de atuação adaptados ao estágio do teu crescimento.
-        </h2>
-
-        <p className="text-gray-400 mb-10 max-w-2xl">
-          Não acreditamos em soluções universais.
-          Cada negócio exige um nível diferente de intervenção.
-        </p>
-
-        <p className="text-gray-300 mb-12 max-w-2xl leading-relaxed">
-          Algumas empresas precisam de clareza.<br />
-          Outras precisam de performance.<br />
-          Outras precisam de escala.<br /><br />
-          O IANDI Lab atua de forma diferente em cada estágio.
-        </p>
-
-        <div className="grid-cards">
-          {[
-            ["ESTÁGIO 1", "IANDI Diagnose™", "Entender o que está a travar o crescimento."],
-            ["ESTÁGIO 2", "IANDI Performance™", "Eficiência e previsibilidade."],
-            ["ESTÁGIO 3", "IANDI Scale™", "Crescimento com método e controlo."],
-            ["ESTÁGIO 4", "IANDI Growth Partner™", "Crescimento como prioridade estratégica."]
-          ].map(([stage, title, text], i) => (
-            <div key={i} className="border border-white/10 p-6 rounded-sm">
-              <p className="text-xs tracking-widest text-gray-500 mb-2">{stage}</p>
-              <h3 className="text-lg mb-2">{title}</h3>
-              <p className="text-gray-400 text-sm mb-4">{text}</p>
-              {i === 0 && (
-                <a href="#contact" className="cta-consulting">
-                  Ver como funciona
-                </a>
-              )}
-            </div>
-          ))}
+        {/* STAGE 2 */}
+        <div className="border border-white/10 p-8">
+          <p className="text-[11px] tracking-[0.3em] text-gray-500 mb-4">
+            ESTÁGIO 2
+          </p>
+          <h3 className="text-xl mb-2">
+            IANDI Performance™
+          </h3>
+          <p className="text-gray-400">
+            Eficiência e previsibilidade.
+          </p>
         </div>
 
-        <div className="mt-12">
-          <a href="#contact" className="cta-consulting">
-            Agendar diagnóstico
-          </a>
+        {/* STAGE 3 */}
+        <div className="border border-white/10 p-8">
+          <p className="text-[11px] tracking-[0.3em] text-gray-500 mb-4">
+            ESTÁGIO 3
+          </p>
+          <h3 className="text-xl mb-2">
+            IANDI Scale™
+          </h3>
+          <p className="text-gray-400">
+            Crescimento com método e controlo.
+          </p>
+        </div>
+
+        {/* STAGE 4 */}
+        <div className="border border-white/10 p-8">
+          <p className="text-[11px] tracking-[0.3em] text-gray-500 mb-4">
+            ESTÁGIO 4
+          </p>
+          <h3 className="text-xl mb-2">
+            IANDI Growth Partner™
+          </h3>
+          <p className="text-gray-400">
+            Crescimento como prioridade estratégica.
+          </p>
         </div>
 
       </div>
