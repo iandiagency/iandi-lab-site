@@ -4,17 +4,20 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative pt-44 md:pt-56 pb-32"
+      className="
+        relative
+        isolate
+        pt-44 md:pt-56
+        pb-32
+      "
     >
-      <div className="max-w-[1200px] mx-auto px-6">
+      <div className="relative z-10 max-w-[1200px] mx-auto px-6">
 
-        {/* MANIFESTO */}
-        <p className="text-[11px] tracking-[0.35em] text-gray-500 mb-10">
+        <p className="text-[11px] tracking-[0.35em] text-gray-500 mb-14">
           A VERDADE QUE NINGUÉM TE DIZ
         </p>
 
-        {/* HEADLINE */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl leading-[1.08] mb-14">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl leading-[1.05] mb-14">
           Crescimento previsível
           <br />
           exige sistema —
@@ -22,23 +25,18 @@ export default function Hero() {
           não improviso.
         </h1>
 
-        {/* SUPPORTING COPY */}
         <p className="text-gray-400 text-base md:text-lg leading-relaxed max-w-xl mb-20">
           A maior parte das marcas não cresce por falta de método.
           Eliminamos ineficiências e instalamos sistemas de aquisição
           que funcionam.
         </p>
 
-        {/* SIGNATURE */}
         <p className="text-[11px] tracking-[0.35em] text-gray-500 mb-24">
           IANDI LAB — SISTEMAS DE CRESCIMENTO
         </p>
 
         {/* CTA */}
-        <div className="relative z-20 pointer-events-auto mt-4">
-          <CTA href="#contact" />
-        </div>
-
+        <CTA href="#contact" />
       </div>
     </section>
   );

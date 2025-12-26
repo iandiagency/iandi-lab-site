@@ -7,6 +7,7 @@ export default function CTA({ href, label = "Agendar diagnóstico" }: CTAProps) 
   return (
     <a
       href={href}
+      role="button"
       className="
         relative inline-flex items-center justify-center
         px-6 py-3
@@ -14,7 +15,10 @@ export default function CTA({ href, label = "Agendar diagnóstico" }: CTAProps) 
         text-sm font-medium text-white
         transition-all duration-300
         hover:border-white hover:bg-white hover:text-black
-        z-10
+
+        z-[60]
+        pointer-events-auto
+        cursor-pointer
       "
     >
       {label}
