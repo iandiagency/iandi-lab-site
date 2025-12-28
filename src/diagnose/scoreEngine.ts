@@ -4,17 +4,33 @@ export type BlockName = Question["block"];
 
 export type ScoreBreakdown = Record<BlockName, number>;
 
+export type Stage =
+  | "DIAGNOSE"
+  | "PERFORMANCE"
+  | "SCALE"
+  | "GROWTH_PARTNER";
+
 export type DiagnoseOutput = {
   scoreTotal: number; // 0–100
-  breakdown: ScoreBreakdown; // 0–20 cada bloco
-  level: "Crescimento travado" | "Operação instável" | "Crescimento estruturável" | "Pronto para escala";
-  recommendedOffer: "IANDI Diagnose™" | "IANDI Performance™" | "IANDI Scale™" | "IANDI Growth Partner™";
+  breakdown: ScoreBreakdown;
+
+  stage: Stage;
+  stageLabel: string;
+
+  recommendedOffer:
+    | "IANDI Diagnose™"
+    | "IANDI Performance™"
+    | "IANDI Scale™"
+    | "IANDI Growth Partner™";
+
   bottlenecks: string[];
   roadmap: { title: string; bullets: string[] }[];
-  estimatedMonthlyLeakKz: number; // estimativa simples para dramatizar perda (não “finance advice”)
+
+  estimatedMonthlyLeakKz: number;
 };
 
-const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
+const clamp = (n: number, min: number, max: number) =>
+  Math.max(min, Math.min(max, n));
 
 export function computeDiagnose(
   questions: Question[],
@@ -33,15 +49,9 @@ export function computeDiagnose(
     breakdown[q.block] += clamp(v, 0, 10);
   }
 
-  // Normaliza por bloco para no máximo 20 (porque alguns blocos têm 2 perguntas e outros 3)
-  // Regras:
-  // - Clareza tem 3 perguntas => max 30, normaliza para 20
-  // - Escala tem 3 perguntas => max 30, normaliza para 20
-  // - Aquisição/Funil/Criativos têm 2 => max 20, mantém
   const normalize = (block: BlockName, maxRaw: number) => {
     const raw = breakdown[block];
-    if (maxRaw === 20) return raw; // já está
-    return Math.round((raw / maxRaw) * 20);
+    return maxRaw === 20 ? raw : Math.round((raw / maxRaw) * 20);
   };
 
   breakdown.Clareza = normalize("Clareza", 30);
@@ -54,25 +64,28 @@ export function computeDiagnose(
     breakdown.Criativos +
     breakdown.Escala;
 
-  const level =
-    scoreTotal <= 35
-      ? "Crescimento travado"
-      : scoreTotal <= 60
-      ? "Operação instável"
-      : scoreTotal <= 80
-      ? "Crescimento estruturável"
-      : "Pronto para escala";
+  let stage: Stage;
+  let stageLabel: string;
+  let recommendedOffer: DiagnoseOutput["recommendedOffer"];
 
-  const recommendedOffer =
-    scoreTotal <= 35
-      ? "IANDI Diagnose™"
-      : scoreTotal <= 60
-      ? "IANDI Performance™"
-      : scoreTotal <= 80
-      ? "IANDI Scale™"
-      : "IANDI Growth Partner™";
+  if (scoreTotal <= 35) {
+    stage = "DIAGNOSE";
+    stageLabel = "Crescimento travado por falta de clareza e estrutura.";
+    recommendedOffer = "IANDI Diagnose™";
+  } else if (scoreTotal <= 60) {
+    stage = "PERFORMANCE";
+    stageLabel = "Operação ativa, mas instável e sem previsibilidade.";
+    recommendedOffer = "IANDI Performance™";
+  } else if (scoreTotal <= 80) {
+    stage = "SCALE";
+    stageLabel = "Crescimento possível, mas ainda pouco escalável.";
+    recommendedOffer = "IANDI Scale™";
+  } else {
+    stage = "GROWTH_PARTNER";
+    stageLabel = "Negócio pronto para crescimento estratégico contínuo.";
+    recommendedOffer = "IANDI Growth Partner™";
+  }
 
-  // Gargalos: pega os 2 piores blocos
   const sortedBlocks = (Object.keys(breakdown) as BlockName[])
     .map((k) => ({ k, v: breakdown[k] }))
     .sort((a, b) => a.v - b.v);
@@ -81,72 +94,74 @@ export function computeDiagnose(
 
   const bottlenecksMap: Record<BlockName, string[]> = {
     Clareza: [
-      "Oferta e posicionamento com baixa nitidez (cliente não entende rápido).",
-      "Falta de foco em uma oferta principal, gerando dispersão.",
+      "Oferta e posicionamento com baixa nitidez.",
+      "Mensagem pouco clara para o cliente ideal.",
     ],
     Aquisição: [
-      "Aquisição sem canal principal validado (instabilidade de entrada).",
-      "Dependência de orgânico/indicação sem previsibilidade.",
+      "Aquisição sem canal principal validado.",
+      "Dependência de tráfego não previsível.",
     ],
     Funil: [
-      "Funil sem estrutura, gerando vazamento após o lead entrar.",
-      "Follow-up/nutrição irregular (oportunidade morre no meio).",
+      "Funil com vazamentos após a entrada do lead.",
+      "Follow-up e qualificação irregulares.",
     ],
     Criativos: [
-      "Criativos sem sistema de teste (performance não evolui).",
-      "Decisões criativas sem evidência (mais opinião do que dado).",
+      "Criativos sem sistema de teste estruturado.",
+      "Decisões baseadas em opinião, não em dados.",
     ],
     Escala: [
-      "Escala sem controlo de CAC/margem (cresce e quebra).",
-      "Orçamento reativo, não planejado (oscila, perde eficiência).",
+      "Escala sem controlo de CAC e margem.",
+      "Orçamento reativo e pouco planeado.",
     ],
   };
 
-  const bottlenecks = worst.flatMap((b) => bottlenecksMap[b]).slice(0, 3);
+  const bottlenecks = worst
+    .flatMap((b) => bottlenecksMap[b])
+    .slice(0, 3);
 
-  // Estimativa simples de “vazamento” (só para priorização)
-  // Regra: quanto menor o score, maior o leak.
-  const estimatedMonthlyLeakKz = Math.round(((100 - scoreTotal) / 100) * 4_500_000);
+  const estimatedMonthlyLeakKz = Math.round(
+    ((100 - scoreTotal) / 100) * 4_500_000
+  );
 
   const roadmap = [
     {
       title: "Oferta & Clareza",
       bullets: [
-        "Fixar uma oferta principal + promessa testável.",
-        "Definir ICP (cliente ideal) e recorte de mercado.",
-        "Mensagem: o que muda, para quem, e por quê agora.",
+        "Fixar uma oferta principal e promessa testável.",
+        "Definir cliente ideal e recorte de mercado.",
+        "Clarificar o porquê agora.",
       ],
     },
     {
       title: "Tráfego & Aquisição",
       bullets: [
-        "Escolher 1 canal principal e validar com métricas.",
-        "Criar estrutura de campanha por objetivo (não por “post bonito”).",
-        "Padronizar tracking e rotina semanal de otimização.",
+        "Escolher um canal principal validado.",
+        "Estruturar campanhas por objetivo.",
+        "Padronizar métricas e otimização.",
       ],
     },
     {
       title: "Funil & Conversão",
       bullets: [
-        "Mapear o funil (entrada → qualificação → oferta → fechamento).",
-        "Criar follow-up e qualificação em passos (não improviso no WhatsApp).",
-        "Definir métricas de vazamento e correções.",
+        "Mapear funil completo.",
+        "Criar follow-up previsível.",
+        "Reduzir vazamentos críticos.",
       ],
     },
     {
       title: "Criativos",
       bullets: [
-        "Criar banco de ângulos + testes contínuos (sem parar).",
-        "Separar criativo por hipótese (dor, prova, mecanismo, urgência).",
-        "Documentar o que funciona e repetir com variações.",
+        "Testes contínuos por hipótese.",
+        "Banco de ângulos e variações.",
+        "Documentar padrões vencedores.",
       ],
     },
     {
-      title: "Orçamento & Escala",
+      title: "Escala & Orçamento",
       bullets: [
-        "Definir CAC alvo e margem mínima aceitável.",
-        "Escalar com guardrails (limite de CPA, frequência, criativos).",
-        "Plano de orçamento semanal (previsível, não emocional).",
+        "Definir CAC alvo.",
+        "Escalar com limites claros.",
+        "Planeamento semanal de orçamento.",
       ],
     },
   ];
@@ -154,7 +169,8 @@ export function computeDiagnose(
   return {
     scoreTotal,
     breakdown,
-    level,
+    stage,
+    stageLabel,
     recommendedOffer,
     bottlenecks,
     roadmap,
