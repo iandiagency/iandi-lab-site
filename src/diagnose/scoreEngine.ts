@@ -1,5 +1,9 @@
 import type { Question } from "./questions";
 
+/* =========================
+   TYPES
+========================= */
+
 export type BlockName = Question["block"];
 
 export type ScoreBreakdown = Record<BlockName, number>;
@@ -11,7 +15,7 @@ export type Stage =
   | "GROWTH_PARTNER";
 
 export type DiagnoseOutput = {
-  scoreTotal: number; // 0–100
+  scoreTotal: number;
   breakdown: ScoreBreakdown;
 
   stage: Stage;
@@ -29,8 +33,37 @@ export type DiagnoseOutput = {
   estimatedMonthlyLeakKz: number;
 };
 
+/* =========================
+   HELPERS
+========================= */
+
 const clamp = (n: number, min: number, max: number) =>
   Math.max(min, Math.min(max, n));
+
+function estimateLeak(scoreTotal: number): number {
+  let revenueBase = 0;
+  let leakRate = 0;
+
+  if (scoreTotal <= 35) {
+    revenueBase = 5_000_000;
+    leakRate = 0.35;
+  } else if (scoreTotal <= 60) {
+    revenueBase = 12_000_000;
+    leakRate = 0.22;
+  } else if (scoreTotal <= 80) {
+    revenueBase = 35_000_000;
+    leakRate = 0.12;
+  } else {
+    revenueBase = 80_000_000;
+    leakRate = 0.05;
+  }
+
+  return Math.round(revenueBase * leakRate);
+}
+
+/* =========================
+   CORE ENGINE
+========================= */
 
 export function computeDiagnose(
   questions: Question[],
@@ -119,9 +152,7 @@ export function computeDiagnose(
     .flatMap((b) => bottlenecksMap[b])
     .slice(0, 3);
 
-  const estimatedMonthlyLeakKz = Math.round(
-    ((100 - scoreTotal) / 100) * 4_500_000
-  );
+  const estimatedMonthlyLeakKz = estimateLeak(scoreTotal);
 
   const roadmap = [
     {
