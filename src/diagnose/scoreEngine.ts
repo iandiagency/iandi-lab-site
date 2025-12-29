@@ -61,6 +61,90 @@ function estimateLeak(scoreTotal: number): number {
   return Math.round(revenueBase * leakRate);
 }
 
+function getRoadmapByStage(stage: Stage) {
+  switch (stage) {
+    case "DIAGNOSE":
+      return [
+        {
+          title: "Diagnóstico & Clareza",
+          bullets: [
+            "Mapear oferta atual e identificar dispersões.",
+            "Definir cliente ideal e problema principal.",
+            "Identificar gargalos críticos no crescimento.",
+          ],
+        },
+        {
+          title: "Base Operacional",
+          bullets: [
+            "Organizar dados mínimos de vendas e leads.",
+            "Mapear funil real (do primeiro contacto ao fecho).",
+            "Eliminar decisões baseadas em achismo.",
+          ],
+        },
+      ];
+
+    case "PERFORMANCE":
+      return [
+        {
+          title: "Eficiência de Aquisição",
+          bullets: [
+            "Validar um canal principal de aquisição.",
+            "Reduzir desperdício de tráfego.",
+            "Criar rotina semanal de otimização.",
+          ],
+        },
+        {
+          title: "Conversão & Funil",
+          bullets: [
+            "Corrigir vazamentos no funil.",
+            "Estruturar follow-up previsível.",
+            "Aumentar taxa de conversão sem subir custo.",
+          ],
+        },
+      ];
+
+    case "SCALE":
+      return [
+        {
+          title: "Sistema de Escala",
+          bullets: [
+            "Definir CAC alvo e margens seguras.",
+            "Criar playbook de campanhas e criativos.",
+            "Escalar com limites claros.",
+          ],
+        },
+        {
+          title: "Controlo & Métricas",
+          bullets: [
+            "Dashboards de decisão.",
+            "Alertas de performance.",
+            "Padronização de testes.",
+          ],
+        },
+      ];
+
+    case "GROWTH_PARTNER":
+      return [
+        {
+          title: "Alavancas Estratégicas",
+          bullets: [
+            "Explorar novos canais e mercados.",
+            "Testar novas ofertas e pricing.",
+            "Criar vantagem competitiva sustentável.",
+          ],
+        },
+        {
+          title: "Governança de Crescimento",
+          bullets: [
+            "Planeamento trimestral.",
+            "Alocação estratégica de orçamento.",
+            "Crescimento como prioridade executiva.",
+          ],
+        },
+      ];
+  }
+}
+
 /* =========================
    CORE ENGINE
 ========================= */
@@ -148,54 +232,7 @@ export function computeDiagnose(
     ],
   };
 
-  const bottlenecks = worst
-    .flatMap((b) => bottlenecksMap[b])
-    .slice(0, 3);
-
-  const estimatedMonthlyLeakKz = estimateLeak(scoreTotal);
-
-  const roadmap = [
-    {
-      title: "Oferta & Clareza",
-      bullets: [
-        "Fixar uma oferta principal e promessa testável.",
-        "Definir cliente ideal e recorte de mercado.",
-        "Clarificar o porquê agora.",
-      ],
-    },
-    {
-      title: "Tráfego & Aquisição",
-      bullets: [
-        "Escolher um canal principal validado.",
-        "Estruturar campanhas por objetivo.",
-        "Padronizar métricas e otimização.",
-      ],
-    },
-    {
-      title: "Funil & Conversão",
-      bullets: [
-        "Mapear funil completo.",
-        "Criar follow-up previsível.",
-        "Reduzir vazamentos críticos.",
-      ],
-    },
-    {
-      title: "Criativos",
-      bullets: [
-        "Testes contínuos por hipótese.",
-        "Banco de ângulos e variações.",
-        "Documentar padrões vencedores.",
-      ],
-    },
-    {
-      title: "Escala & Orçamento",
-      bullets: [
-        "Definir CAC alvo.",
-        "Escalar com limites claros.",
-        "Planeamento semanal de orçamento.",
-      ],
-    },
-  ];
+  const bottlenecks = worst.flatMap((b) => bottlenecksMap[b]).slice(0, 3);
 
   return {
     scoreTotal,
@@ -204,7 +241,7 @@ export function computeDiagnose(
     stageLabel,
     recommendedOffer,
     bottlenecks,
-    roadmap,
-    estimatedMonthlyLeakKz,
+    roadmap: getRoadmapByStage(stage),
+    estimatedMonthlyLeakKz: estimateLeak(scoreTotal),
   };
 }
