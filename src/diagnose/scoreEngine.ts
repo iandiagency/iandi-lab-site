@@ -5,14 +5,9 @@ import type { Question } from "./questions";
 ========================= */
 
 export type BlockName = Question["block"];
-
 export type ScoreBreakdown = Record<BlockName, number>;
 
-export type Stage =
-  | "DIAGNOSE"
-  | "PERFORMANCE"
-  | "SCALE"
-  | "GROWTH_PARTNER";
+export type Stage = "DIAGNOSE" | "PERFORMANCE" | "SCALE" | "GROWTH_PARTNER";
 
 export type DiagnoseOutput = {
   scoreTotal: number;
@@ -41,6 +36,7 @@ const clamp = (n: number, min: number, max: number) =>
   Math.max(min, Math.min(max, n));
 
 function estimateLeak(scoreTotal: number): number {
+  // calibragem simples, não “finance advice” — serve para priorização
   let revenueBase = 0;
   let leakRate = 0;
 
@@ -68,17 +64,17 @@ function getRoadmapByStage(stage: Stage) {
         {
           title: "Diagnóstico & Clareza",
           bullets: [
-            "Mapear oferta atual e identificar dispersões.",
-            "Definir cliente ideal e problema principal.",
-            "Identificar gargalos críticos no crescimento.",
+            "Fixar 1 oferta principal e promessa testável.",
+            "Definir ICP e recorte de mercado (o cliente ideal).",
+            "Clarificar mensagem: o que muda, para quem e por quê agora.",
           ],
         },
         {
           title: "Base Operacional",
           bullets: [
-            "Organizar dados mínimos de vendas e leads.",
-            "Mapear funil real (do primeiro contacto ao fecho).",
-            "Eliminar decisões baseadas em achismo.",
+            "Mapear o funil real (entrada → qualificação → fecho).",
+            "Criar mínimos de tracking e rotina semanal.",
+            "Eliminar decisões por achismo (documentar hipóteses e resultados).",
           ],
         },
       ];
@@ -88,17 +84,17 @@ function getRoadmapByStage(stage: Stage) {
         {
           title: "Eficiência de Aquisição",
           bullets: [
-            "Validar um canal principal de aquisição.",
-            "Reduzir desperdício de tráfego.",
-            "Criar rotina semanal de otimização.",
+            "Validar 1 canal principal com métricas (não múltiplos canais fracos).",
+            "Estruturar campanhas por objetivo e intenção.",
+            "Criar rotina semanal de otimização (guardrails de CPA, frequência, criativo).",
           ],
         },
         {
           title: "Conversão & Funil",
           bullets: [
-            "Corrigir vazamentos no funil.",
-            "Estruturar follow-up previsível.",
-            "Aumentar taxa de conversão sem subir custo.",
+            "Corrigir vazamentos do funil e padronizar qualificação.",
+            "Follow-up previsível (cadência, scripts, sinais de compra).",
+            "Aumentar conversão sem aumentar custo.",
           ],
         },
       ];
@@ -108,17 +104,17 @@ function getRoadmapByStage(stage: Stage) {
         {
           title: "Sistema de Escala",
           bullets: [
-            "Definir CAC alvo e margens seguras.",
-            "Criar playbook de campanhas e criativos.",
-            "Escalar com limites claros.",
+            "Definir CAC alvo e margem mínima aceitável.",
+            "Criar playbook de campanhas e criativos (hipóteses, variações, cadência).",
+            "Escalar com limites claros e gatilhos de corte/expansão.",
           ],
         },
         {
           title: "Controlo & Métricas",
           bullets: [
-            "Dashboards de decisão.",
-            "Alertas de performance.",
-            "Padronização de testes.",
+            "Dashboards de decisão (inputs e outputs).",
+            "Alertas de performance e revisão semanal.",
+            "Padronização de testes para repetição de padrões vencedores.",
           ],
         },
       ];
@@ -128,17 +124,17 @@ function getRoadmapByStage(stage: Stage) {
         {
           title: "Alavancas Estratégicas",
           bullets: [
-            "Explorar novos canais e mercados.",
-            "Testar novas ofertas e pricing.",
-            "Criar vantagem competitiva sustentável.",
+            "Explorar novos canais e mercados com método.",
+            "Testar novas ofertas, upsells e pricing.",
+            "Criar vantagem competitiva sustentável (prova, ativos, distribuição).",
           ],
         },
         {
           title: "Governança de Crescimento",
           bullets: [
-            "Planeamento trimestral.",
-            "Alocação estratégica de orçamento.",
-            "Crescimento como prioridade executiva.",
+            "Planeamento trimestral e alocação estratégica de orçamento.",
+            "Ritual executivo de performance (KPIs e decisões).",
+            "Crescimento como prioridade de liderança, não só marketing.",
           ],
         },
       ];
@@ -166,6 +162,7 @@ export function computeDiagnose(
     breakdown[q.block] += clamp(v, 0, 10);
   }
 
+  // Normalização: blocos com 3 perguntas (max 30) viram 0–20
   const normalize = (block: BlockName, maxRaw: number) => {
     const raw = breakdown[block];
     return maxRaw === 20 ? raw : Math.round((raw / maxRaw) * 20);
@@ -203,6 +200,7 @@ export function computeDiagnose(
     recommendedOffer = "IANDI Growth Partner™";
   }
 
+  // Gargalos: 2 piores blocos
   const sortedBlocks = (Object.keys(breakdown) as BlockName[])
     .map((k) => ({ k, v: breakdown[k] }))
     .sort((a, b) => a.v - b.v);
@@ -234,6 +232,9 @@ export function computeDiagnose(
 
   const bottlenecks = worst.flatMap((b) => bottlenecksMap[b]).slice(0, 3);
 
+  const estimatedMonthlyLeakKz = estimateLeak(scoreTotal);
+  const roadmap = getRoadmapByStage(stage);
+
   return {
     scoreTotal,
     breakdown,
@@ -241,7 +242,7 @@ export function computeDiagnose(
     stageLabel,
     recommendedOffer,
     bottlenecks,
-    roadmap: getRoadmapByStage(stage),
-    estimatedMonthlyLeakKz: estimateLeak(scoreTotal),
+    roadmap,
+    estimatedMonthlyLeakKz,
   };
 }
