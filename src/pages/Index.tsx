@@ -1,24 +1,16 @@
-import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
-import WhatWeFix from "@/components/WhatWeFix";
-import ModelsOfEngagement from "@/components/ModelsOfEngagement";
-import Playbook from "@/components/Playbook";
-import Results from "@/components/Results";
-import AboutLab from "@/components/AboutLab";
-import Footer from "@/components/Footer";
-
 export default function Index() {
   return (
-    <div className="min-h-screen bg-black text-white">
-      <Navbar />
+    <main className="page">
+      <section className="hero">
+        <span className="eyebrow">Growth & Strategy Lab</span>
 
-      <Hero />
-      <WhatWeFix />
-      <ModelsOfEngagement />
-      <Playbook />
-      <Results />
-      <AboutLab />
-      <Footer />
-    </div>
+        <h1>IANDI Lab</h1>
+
+        <p>
+          Diagnóstico estratégico para crescimento previsível,
+          baseado em dados, estrutura e controlo.
+        </p>
+      </section>
+    </main>
   );
 }

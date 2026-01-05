@@ -3,59 +3,69 @@
 @tailwind utilities;
 
 /* ============================
-   IANDI LAB — GRID SYSTEM
-   ============================ */
+   BASE — IANDI LAB
+============================ */
 
 @layer base {
-  body {
-    @apply bg-black text-white font-inter antialiased;
+  html, body {
+    height: 100%;
   }
 
-  h1, h2, h3, h4 {
+  body {
+    @apply bg-[#0B0B0C] text-white antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  h1, h2, h3 {
     @apply font-light tracking-tight;
   }
+
+  p {
+    @apply text-zinc-400 leading-relaxed;
+  }
 }
 
 /* ============================
-   SECTION SYSTEM
-   ============================ */
+   DESIGN SYSTEM — DIAGNOSE
+============================ */
 
 @layer components {
-  /* Container padrão */
-  .page-container {
-    @apply max-w-[1100px] mx-auto;
+  /* Container editorial */
+  .diagnose-container {
+    @apply max-w-[1100px] mx-auto px-6 md:px-24 pt-28 md:pt-32;
   }
 
-  /* Secção padrão */
-  .section {
-    @apply py-16 md:py-24 px-6 md:px-20;
+  /* Eyebrow (contexto) */
+  .eyebrow {
+    @apply text-[11px] uppercase tracking-[0.35em] text-zinc-500 mb-6;
   }
 
-  /* Secção mais densa */
-  .section-tight {
-    @apply py-12 md:py-16 px-6 md:px-20;
+  /* Cards de decisão */
+  .diagnose-card {
+    @apply w-full text-left border border-white/10 p-6 md:p-8
+           transition-colors duration-200
+           hover:border-white/40
+           focus:outline-none focus:border-white;
   }
 
-  /* Grid consultivo */
-  .grid-consulting {
-    @apply grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20;
+  .diagnose-card h3 {
+    @apply text-base text-white mb-2;
   }
 
-  /* Grid de cards */
-  .grid-cards {
-    @apply grid grid-cols-1 md:grid-cols-2 gap-8;
+  .diagnose-card p {
+    @apply text-sm text-zinc-400 leading-relaxed;
   }
 
-  /* CTA consultivo (não e-commerce) */
-  .cta-consulting {
-    @apply inline-flex text-sm font-medium text-gray-300 border-b border-gray-500/40 pb-1 transition hover:text-white hover:border-white;
+  /* CTA consultivo */
+  .diagnose-cta {
+    @apply mt-12 inline-flex items-center text-sm text-zinc-300
+           border-b border-zinc-600 pb-1
+           hover:text-white hover:border-white
+           transition;
   }
-}
 
-/* ============================
-   ANCHOR OFFSET (NAVBAR FIXO)
-   ============================ */
-
-section[id] {
-  scroll-margin-top: 96px;
+  /* Progresso */
+  .diagnose-progress {
+    @apply mt-16 text-[11px] tracking-[0.3em] text-zinc-500;
+  }
 }
