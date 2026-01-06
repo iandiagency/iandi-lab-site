@@ -1,11 +1,16 @@
 import { create } from "zustand";
 
+/* ============================
+   TYPES
+============================ */
+
 export type StepKey =
   | "context"
   | "system"
   | "friction"
   | "decision"
-  | "lead_capture";
+  | "lead_capture"
+  | "result";
 
 export type Tier = "A" | "B" | "C" | "D";
 export type Dimension = "acquisition" | "conversion" | "retention" | "data";
@@ -28,7 +33,22 @@ type DiagnoseState = {
   reset: () => void;
 };
 
-const steps: StepKey[] = ["context", "system", "friction", "decision"];
+/* ============================
+   FLOW DE STEPS (ORDEM ÚNICA)
+============================ */
+
+const steps: StepKey[] = [
+  "context",
+  "system",
+  "friction",
+  "decision",
+  "lead_capture",
+  "result",
+];
+
+/* ============================
+   INITIAL STATE
+============================ */
 
 const initialScores: Record<Dimension, number> = {
   acquisition: 0,
@@ -36,6 +56,10 @@ const initialScores: Record<Dimension, number> = {
   retention: 0,
   data: 0,
 };
+
+/* ============================
+   STORE
+============================ */
 
 export const useDiagnoseStore = create<DiagnoseState>((set, get) => ({
   step: "context",
@@ -47,27 +71,40 @@ export const useDiagnoseStore = create<DiagnoseState>((set, get) => ({
   tier: null,
   primaryLeak: null,
 
+  /* ---------- ANSWERS ---------- */
+
   setAnswer: (id, value) => {
-    set((s) => ({
-      answers: { ...s.answers, [id]: value },
+    set((state) => ({
+      answers: { ...state.answers, [id]: value },
     }));
   },
 
+  /* ---------- NAVIGATION ---------- */
+
   next: () => {
     const nextIndex = Math.min(get().stepIndex + 1, steps.length - 1);
-    set({ stepIndex: nextIndex, step: steps[nextIndex] });
+    set({
+      stepIndex: nextIndex,
+      step: steps[nextIndex],
+    });
   },
 
   back: () => {
     const prevIndex = Math.max(get().stepIndex - 1, 0);
-    set({ stepIndex: prevIndex, step: steps[prevIndex] });
+    set({
+      stepIndex: prevIndex,
+      step: steps[prevIndex],
+    });
   },
+
+  /* ---------- COMPUTE ---------- */
 
   compute: () => {
     const { answers } = get();
     const scores = { ...initialScores };
     const riskFlags: string[] = [];
 
+    // Acquisition
     const acq = answers["q_acq_main"];
     if (acq === "paid") scores.acquisition += 2;
     if (acq === "organic" || acq === "referral") scores.acquisition += 1;
@@ -75,24 +112,33 @@ export const useDiagnoseStore = create<DiagnoseState>((set, get) => ({
       riskFlags.push("Dependência de WhatsApp sem sistema de aquisição.");
     }
 
+    // Data / Tracking
     if (answers["q_tracking"] === true) scores.data += 2;
-    if (answers["q_tracking"] === false)
+    if (answers["q_tracking"] === false) {
       riskFlags.push("Sem tracking de conversões.");
+    }
 
-    if (answers["q_knows_cac"] !== true)
+    if (answers["q_knows_cac"] !== true) {
       riskFlags.push("Não sabe CAC/CPA.");
+    }
 
+    // Conversion
     const offer = Number(answers["q_offer_clarity"] ?? 0);
     if (offer >= 4) scores.conversion += 2;
     else if (offer >= 2) scores.conversion += 1;
-    else riskFlags.push("Oferta pouco clara.");
+    else {
+      riskFlags.push("Oferta pouco clara.");
+    }
 
+    // Retention
     const ret = answers["q_retention"];
     if (ret === "strong") scores.retention += 2;
     if (ret === "some") scores.retention += 1;
-    if (ret === "none")
+    if (ret === "none") {
       riskFlags.push("Sem retenção ou recorrência.");
+    }
 
+    // Primary leak (menor score)
     const dims: Dimension[] = [
       "acquisition",
       "conversion",
@@ -100,10 +146,11 @@ export const useDiagnoseStore = create<DiagnoseState>((set, get) => ({
       "data",
     ];
 
-    const primaryLeak = dims.reduce((a, b) =>
-      scores[a] <= scores[b] ? a : b
-    );
+    const primaryLeak = dims.reduce((lowest, dim) =>
+      scores[dim] < scores[lowest] ? dim : lowest
+    , dims[0]);
 
+    // Tier
     const total = dims.reduce((sum, d) => sum + scores[d], 0);
 
     let tier: Tier = "D";
@@ -113,6 +160,8 @@ export const useDiagnoseStore = create<DiagnoseState>((set, get) => ({
 
     set({ scores, riskFlags, primaryLeak, tier });
   },
+
+  /* ---------- RESET ---------- */
 
   reset: () => {
     set({
