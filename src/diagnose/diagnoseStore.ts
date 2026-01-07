@@ -9,8 +9,8 @@ export type StepKey =
   | "system"
   | "friction"
   | "decision"
-  | "lead_capture"
-  | "result";
+  | "result"
+  | "lead_capture";
 
 export type Tier = "A" | "B" | "C" | "D";
 export type Dimension = "acquisition" | "conversion" | "retention" | "data";
@@ -34,7 +34,8 @@ type DiagnoseState = {
 };
 
 /* ============================
-   FLOW DE STEPS (ORDEM ÚNICA)
+   FLOW DE STEPS (ORDEM CORRETA)
+   D2: Resultado → Lead Capture
 ============================ */
 
 const steps: StepKey[] = [
@@ -42,8 +43,8 @@ const steps: StepKey[] = [
   "system",
   "friction",
   "decision",
-  "lead_capture",
   "result",
+  "lead_capture",
 ];
 
 /* ============================
@@ -97,14 +98,14 @@ export const useDiagnoseStore = create<DiagnoseState>((set, get) => ({
     });
   },
 
-  /* ---------- COMPUTE ---------- */
+  /* ---------- COMPUTE (CÉREBRO) ---------- */
 
   compute: () => {
     const { answers } = get();
     const scores = { ...initialScores };
     const riskFlags: string[] = [];
 
-    // Acquisition
+    /* Acquisition */
     const acq = answers["q_acq_main"];
     if (acq === "paid") scores.acquisition += 2;
     if (acq === "organic" || acq === "referral") scores.acquisition += 1;
@@ -112,7 +113,7 @@ export const useDiagnoseStore = create<DiagnoseState>((set, get) => ({
       riskFlags.push("Dependência de WhatsApp sem sistema de aquisição.");
     }
 
-    // Data / Tracking
+    /* Data */
     if (answers["q_tracking"] === true) scores.data += 2;
     if (answers["q_tracking"] === false) {
       riskFlags.push("Sem tracking de conversões.");
@@ -122,7 +123,7 @@ export const useDiagnoseStore = create<DiagnoseState>((set, get) => ({
       riskFlags.push("Não sabe CAC/CPA.");
     }
 
-    // Conversion
+    /* Conversion */
     const offer = Number(answers["q_offer_clarity"] ?? 0);
     if (offer >= 4) scores.conversion += 2;
     else if (offer >= 2) scores.conversion += 1;
@@ -130,7 +131,7 @@ export const useDiagnoseStore = create<DiagnoseState>((set, get) => ({
       riskFlags.push("Oferta pouco clara.");
     }
 
-    // Retention
+    /* Retention */
     const ret = answers["q_retention"];
     if (ret === "strong") scores.retention += 2;
     if (ret === "some") scores.retention += 1;
@@ -138,7 +139,7 @@ export const useDiagnoseStore = create<DiagnoseState>((set, get) => ({
       riskFlags.push("Sem retenção ou recorrência.");
     }
 
-    // Primary leak (menor score)
+    /* Primary leak */
     const dims: Dimension[] = [
       "acquisition",
       "conversion",
@@ -147,10 +148,11 @@ export const useDiagnoseStore = create<DiagnoseState>((set, get) => ({
     ];
 
     const primaryLeak = dims.reduce((lowest, dim) =>
-      scores[dim] < scores[lowest] ? dim : lowest
-    , dims[0]);
+      scores[dim] < scores[lowest] ? dim : lowest,
+      dims[0]
+    );
 
-    // Tier
+    /* Tier */
     const total = dims.reduce((sum, d) => sum + scores[d], 0);
 
     let tier: Tier = "D";
@@ -158,7 +160,15 @@ export const useDiagnoseStore = create<DiagnoseState>((set, get) => ({
     if (total >= 11) tier = "B";
     if (total >= 15) tier = "A";
 
-    set({ scores, riskFlags, primaryLeak, tier });
+    /* RESULTADO + TRANSIÇÃO */
+    set({
+      scores,
+      riskFlags,
+      primaryLeak,
+      tier,
+      step: "result",
+      stepIndex: steps.indexOf("result"),
+    });
   },
 
   /* ---------- RESET ---------- */

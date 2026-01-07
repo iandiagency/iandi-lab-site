@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { useDiagnoseStore } from "./diagnoseStore";
 
-import DiagnoseIntro from "./DiagnoseIntro";
+import DiagnoseContext from "./DiagnoseContext";
 import DiagnoseForm from "./DiagnoseForm";
-import DiagnoseProgress from "./DiagnoseProgress";
 import DiagnoseDecision from "./DiagnoseDecision";
-import DiagnoseLeadCapture from "./DiagnoseLeadCapture";
 import DiagnoseResult from "./DiagnoseResult";
+import DiagnoseLeadCapture from "./DiagnoseLeadCapture";
+import DiagnoseProgress from "./DiagnoseProgress";
 
 export default function DiagnosePage() {
   const step = useDiagnoseStore((s) => s.step);
@@ -22,12 +22,12 @@ export default function DiagnosePage() {
     <main className="min-h-screen bg-[#0B0B0C] text-white">
       <DiagnoseProgress />
 
-      {step === "context" && <DiagnoseIntro />}
+      {step === "context" && <DiagnoseContext />}
       {step === "system" && <DiagnoseForm />}
       {step === "friction" && <DiagnoseForm />}
       {step === "decision" && <DiagnoseDecision />}
-      {step === "lead_capture" && <DiagnoseLeadCapture />}
       {step === "result" && <DiagnoseResult />}
+      {step === "lead_capture" && <DiagnoseLeadCapture />}
     </main>
   );
 }
