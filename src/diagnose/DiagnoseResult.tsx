@@ -1,4 +1,4 @@
-import type { DiagnoseOutput, Stage } from "./scoreEngine";
+import type { DiagnoseOutput, Stage } from "./engine";
 
 type Props = {
   result: DiagnoseOutput;

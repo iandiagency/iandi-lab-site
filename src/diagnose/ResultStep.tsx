@@ -1,83 +1,62 @@
+import { useNavigate } from "react-router-dom";
 import { useDiagnoseStore } from "./diagnoseStore";
 
-const tierLabel: Record<string, string> = {
-  A: "Estrutura pronta para escalar",
-  B: "Base sólida, com ajustes críticos",
-  C: "Crescimento frágil",
-  D: "Risco elevado ao escalar",
-};
-
-const leakLabel: Record<string, string> = {
-  acquisition: "Aquisição",
-  conversion: "Conversão",
-  retention: "Retenção",
-  data: "Dados & Decisão",
-};
-
 export default function ResultStep() {
-  const tier = useDiagnoseStore((s) => s.tier);
-  const primaryLeak = useDiagnoseStore((s) => s.primaryLeak);
-  const riskFlags = useDiagnoseStore((s) => s.riskFlags);
-  const next = useDiagnoseStore((s) => s.next);
+  const navigate = useNavigate();
+  const result = useDiagnoseStore((s) => s.result);
+
+  if (!result) return null;
+
+  const tierMessage = {
+    A: "O teu sistema apresenta previsibilidade e estrutura. O foco agora é otimizar e escalar com controlo.",
+    B: "Existe base para crescimento, mas há pontos de instabilidade que precisam de correção.",
+    C: "O crescimento atual é instável. Escalar agora aumentaria o risco e o desperdício.",
+    D: "O sistema não é previsível. Escalar neste estado gera perda direta de recursos.",
+  }[result.tier];
 
   return (
-    <section className="space-y-10">
-      {/* HEADER */}
-      <div className="space-y-2">
-        <p className="text-xs uppercase tracking-widest text-zinc-500">
-          Resultado do Diagnóstico
-        </p>
+    <div className="min-h-screen bg-black text-white flex items-center justify-center px-6">
+      <div className="w-full max-w-xl text-center space-y-8">
 
-        <h1 className="text-2xl font-semibold">
-          Nível de prontidão: Tier {tier}
+        {/* TÍTULO */}
+        <h1 className="text-4xl sm:text-5xl font-light">
+          Resultado
         </h1>
 
-        <p className="text-zinc-400">
-          {tier ? tierLabel[tier] : ""}
-        </p>
-      </div>
-
-      {/* PRIMARY LEAK */}
-      <div className="border border-white/10 rounded-lg p-4 space-y-2">
-        <p className="text-sm text-zinc-400">
-          Principal travão identificado
-        </p>
-
-        <p className="text-lg font-medium">
-          {primaryLeak ? leakLabel[primaryLeak] : "-"}
-        </p>
-      </div>
-
-      {/* RISKS */}
-      {riskFlags.length > 0 && (
+        {/* SCORE */}
         <div className="space-y-2">
-          <p className="text-sm text-zinc-400">
-            Riscos críticos se escalar agora
+          <p className="text-xl text-zinc-400">
+            Score total
           </p>
-
-          <ul className="list-disc list-inside text-sm text-zinc-300 space-y-1">
-            {riskFlags.slice(0, 3).map((risk, i) => (
-              <li key={i}>{risk}</li>
-            ))}
-          </ul>
+          <p className="text-3xl font-medium">
+            {result.totalScore}
+          </p>
         </div>
-      )}
 
-      {/* WARNING */}
-      <div className="border-l-2 border-white/30 pl-4 text-sm text-zinc-400">
-        Escalar sem corrigir isto tende a amplificar custos,
-        não resultados.
-      </div>
+        {/* TIER */}
+        <div className="space-y-2">
+          <p className="text-xl text-zinc-400">
+            Classificação
+          </p>
+          <p className="text-2xl font-semibold">
+            Tier {result.tier}
+          </p>
+        </div>
 
-      {/* CTA */}
-      <div className="pt-4 border-t border-white/10">
+        {/* MENSAGEM CONTEXTUAL */}
+        <p className="text-zinc-400 leading-relaxed">
+          {tierMessage}
+        </p>
+
+        {/* CTA ÚNICO */}
         <button
-          onClick={next}
-          className="w-full px-6 py-3 border border-white/20 rounded-md hover:border-white transition"
+          onClick={() => navigate("/next-step")}
+          className="mt-6 inline-flex items-center justify-center rounded-full bg-white text-black px-8 py-4 text-base font-medium hover:opacity-90 transition"
         >
-          Ver próximo passo
+          Explorar crescimento avançado
         </button>
+
       </div>
-    </section>
+    </div>
   );
 }

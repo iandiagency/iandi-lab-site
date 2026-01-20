@@ -1,60 +1,20 @@
-type StepShellProps = {
-  eyebrow: string;
+// src/diagnose/StepShell.tsx
+type Props = {
+  badge: string;
   title: string;
-  description?: string;
+  desc: string;
   children: React.ReactNode;
-  onNext: () => void;
-  onBack?: () => void;
-  canProceed: boolean;
 };
 
-export default function StepShell({
-  eyebrow,
-  title,
-  description,
-  children,
-  onNext,
-  onBack,
-  canProceed,
-}: StepShellProps) {
+export default function StepShell({ badge, title, desc, children }: Props) {
   return (
-    <section className="space-y-8">
-      {/* HEADER */}
-      <div className="space-y-2">
-        <p className="text-xs uppercase tracking-widest text-zinc-500">
-          {eyebrow}
-        </p>
-        <h1 className="text-2xl font-semibold">{title}</h1>
-        {description && (
-          <p className="text-zinc-400">{description}</p>
-        )}
+    <main className="min-h-screen bg-black text-white flex items-center">
+      <div className="max-w-3xl mx-auto px-6 space-y-10">
+        <p className="text-xs tracking-widest text-white/50">{badge}</p>
+        <h1 className="text-4xl font-light">{title}</h1>
+        <p className="text-white/60">{desc}</p>
+        <div className="space-y-6">{children}</div>
       </div>
-
-      {/* CONTENT */}
-      <div>{children}</div>
-
-      {/* FOOTER */}
-      <div className="pt-6 border-t border-white/10 flex items-center justify-between gap-4">
-        {onBack ? (
-          <button
-            onClick={onBack}
-            className="px-4 py-2 text-sm text-zinc-400 hover:text-white transition"
-          >
-            Voltar
-          </button>
-        ) : (
-          <span />
-        )}
-
-        <button
-          onClick={onNext}
-          disabled={!canProceed}
-          className="px-6 py-3 border border-white/20 rounded-md
-                     hover:border-white transition disabled:opacity-40"
-        >
-          Próximo
-        </button>
-      </div>
-    </section>
+    </main>
   );
 }

@@ -1,25 +1,24 @@
 export default function Footer() {
   return (
-    <footer className="pt-16 pb-10 px-6 md:px-20 border-t border-white/10">
-      <div className="page-container flex flex-col md:flex-row justify-between gap-8">
+    <footer className="border-t border-white/10 bg-black">
+      <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col items-center gap-4 text-xs text-zinc-500 text-center">
 
-        <div>
-          <img
-            src="/iandilab-horizontal-white.svg"
-            alt="IANDI Lab"
-            className="h-6 mb-4"
-          />
-          <p className="text-xs text-gray-500 max-w-xs">
-            Unidade de consultoria em crescimento.
-            Estratégia, performance e sistemas previsíveis.
-          </p>
-        </div>
+        {/* LOGO */}
+        <img
+          src="/iandi-lab-logo-white.png"
+          alt="IANDI Lab"
+          className="h-6 opacity-80"
+          draggable={false}
+        />
 
-        <div className="text-xs text-gray-500">
-          © 2025 IANDI Lab<br />
-          Agendar diagnóstico estratégico
-        </div>
+        {/* DESCRIÇÃO */}
+        <p className="max-w-md leading-relaxed">
+          Unidade de consultoria em crescimento.  
+          Estratégia, performance e sistemas previsíveis.
+        </p>
 
+        {/* COPYRIGHT */}
+        <p>© 2025 IANDI Lab</p>
       </div>
     </footer>
   );

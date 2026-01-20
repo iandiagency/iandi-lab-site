@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { QUESTIONS } from "./questions";
 import DiagnoseProgress from "./DiagnoseProgress";
-import { computeDiagnose } from "./scoreEngine";
+import { computeDiagnose } from "./engine";
 import DiagnoseResult from "./DiagnoseResult";
 
 export default function DiagnoseForm() {

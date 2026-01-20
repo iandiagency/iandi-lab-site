@@ -1,140 +1,70 @@
-export type AnswerValue = 0 | 5 | 10;
+export type Dimension =
+  | "acquisition"
+  | "system"
+  | "friction"
+  | "decision";
 
-export type Question = {
-  id: string;
-  block: "Clareza" | "Aquisição" | "Funil" | "Criativos" | "Escala";
-  title: string;
-  options: { label: string; value: AnswerValue }[];
+export type Option = {
+  label: string;
+  score: number;
 };
 
-export const QUESTIONS: Question[] = [
-  // BLOCO 1 — Clareza (0–20)
+export type Step = {
+  key: Dimension;
+  badge: string;
+  title: string;
+  desc: string;
+  options: Option[];
+};
+
+export const STEPS: Step[] = [
   {
-    id: "q1",
-    block: "Clareza",
-    title: "A sua proposta de valor é clara para o cliente em até 5 segundos?",
+    key: "acquisition",
+    badge: "ETAPA 1 — AQUISIÇÃO",
+    title: "De onde vêm os clientes hoje?",
+    desc: "Esta resposta define se o crescimento depende de sistema ou esforço.",
     options: [
-      { label: "Sim, é clara e diferenciada", value: 10 },
-      { label: "Parcialmente clara", value: 5 },
-      { label: "Não é clara", value: 0 },
-    ],
-  },
-  {
-    id: "q2",
-    block: "Clareza",
-    title: "O seu negócio tem foco em uma oferta principal?",
-    options: [
-      { label: "Sim, uma oferta bem definida", value: 10 },
-      { label: "Duas ou três ofertas concorrentes", value: 5 },
-      { label: "Muitas ofertas, sem foco", value: 0 },
-    ],
-  },
-  {
-    id: "q3",
-    block: "Clareza",
-    title: "O seu cliente ideal está claramente definido?",
-    options: [
-      { label: "Sim", value: 10 },
-      { label: "Mais ou menos", value: 5 },
-      { label: "Não", value: 0 },
+      { label: "Tráfego pago previsível", score: 4 },
+      { label: "Tráfego pago sem controlo", score: 1 },
+      { label: "Orgânico / Conteúdo", score: 2 },
+      { label: "Indicações / Networking", score: 1 },
+      { label: "WhatsApp informal", score: 0 },
     ],
   },
 
-  // BLOCO 2 — Aquisição (0–20)
   {
-    id: "q4",
-    block: "Aquisição",
-    title: "Como o seu negócio adquire clientes hoje?",
+    key: "system",
+    badge: "ETAPA 2 — SISTEMA",
+    title: "Como os clientes avançam até à venda?",
+    desc: "Crescimento previsível exige sistema.",
     options: [
-      { label: "Tráfego pago com previsibilidade", value: 10 },
-      { label: "Indicações / orgânico irregular", value: 5 },
-      { label: "Não há sistema claro", value: 0 },
-    ],
-  },
-  {
-    id: "q5",
-    block: "Aquisição",
-    title: "Existe um canal principal validado?",
-    options: [
-      { label: "Sim, com métricas claras", value: 10 },
-      { label: "Em teste", value: 5 },
-      { label: "Não", value: 0 },
+      { label: "Funil estruturado", score: 4 },
+      { label: "Depende de pessoas", score: 2 },
+      { label: "Tudo manual", score: 0 },
     ],
   },
 
-  // BLOCO 3 — Funil (0–20)
   {
-    id: "q6",
-    block: "Funil",
-    title: "O seu funil de vendas está mapeado e documentado?",
+    key: "friction",
+    badge: "ETAPA 3 — FRICÇÃO",
+    title: "O quão clara é a oferta?",
+    desc: "Confusão gera fricção invisível.",
     options: [
-      { label: "Sim", value: 10 },
-      { label: "Parcialmente", value: 5 },
-      { label: "Não", value: 0 },
-    ],
-  },
-  {
-    id: "q7",
-    block: "Funil",
-    title: "Os leads são nutridos ou acompanhados?",
-    options: [
-      { label: "Sim, com processo", value: 10 },
-      { label: "Manual / irregular", value: 5 },
-      { label: "Não", value: 0 },
+      { label: "Muito clara", score: 4 },
+      { label: "Clara mas complexa", score: 2 },
+      { label: "Confusa", score: 0 },
     ],
   },
 
-  // BLOCO 4 — Criativos (0–20)
   {
-    id: "q8",
-    block: "Criativos",
-    title: "Os criativos são testados sistematicamente?",
+    key: "decision",
+    badge: "ETAPA 4 — DECISÃO",
+    title: "Existe recorrência?",
+    desc: "Retenção define sustentabilidade.",
     options: [
-      { label: "Sim, com testes constantes", value: 10 },
-      { label: "Ocasionalmente", value: 5 },
-      { label: "Não", value: 0 },
-    ],
-  },
-  {
-    id: "q9",
-    block: "Criativos",
-    title: "As decisões criativas são baseadas em dados?",
-    options: [
-      { label: "Sim", value: 10 },
-      { label: "Parcialmente", value: 5 },
-      { label: "Não", value: 0 },
-    ],
-  },
-
-  // BLOCO 5 — Escala (0–20)
-  {
-    id: "q10",
-    block: "Escala",
-    title: "O CAC (custo por aquisição) é conhecido?",
-    options: [
-      { label: "Sim", value: 10 },
-      { label: "Estimado", value: 5 },
-      { label: "Não sei", value: 0 },
-    ],
-  },
-  {
-    id: "q11",
-    block: "Escala",
-    title: "O negócio consegue escalar sem perder margem?",
-    options: [
-      { label: "Sim", value: 10 },
-      { label: "Não sei", value: 5 },
-      { label: "Não", value: 0 },
-    ],
-  },
-  {
-    id: "q12",
-    block: "Escala",
-    title: "O orçamento de marketing é controlado e planejado?",
-    options: [
-      { label: "Sim", value: 10 },
-      { label: "Parcialmente", value: 5 },
-      { label: "Não", value: 0 },
+      { label: "Sim, consistente", score: 4 },
+      { label: "Às vezes", score: 2 },
+      { label: "Não existe", score: 0 },
     ],
   },
 ];

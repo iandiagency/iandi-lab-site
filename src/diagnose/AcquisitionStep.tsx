@@ -2,8 +2,8 @@ import StepShell from "./StepShell";
 import { STEPS } from "./questions";
 import { useDiagnoseStore } from "./diagnoseStore";
 
-export default function FrictionStep() {
-  const step = STEPS[2];
+export default function AcquisitionStep() {
+  const step = STEPS[0];
   const answerAndNext = useDiagnoseStore((s) => s.answerAndNext);
 
   return (

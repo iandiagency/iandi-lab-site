@@ -1,164 +1,40 @@
 import { create } from "zustand";
+import { Dimension } from "./questions";
 
-/* ============================
-   TYPES
-============================ */
+type Result = {
+  totalScore: number;
+  tier: "A" | "B" | "C" | "D";
+};
 
-export type StepKey =
-  | "context"
-  | "system"
-  | "friction"
-  | "decision"
-  | "result"
-  | "lead_capture";
-
-export type Tier = "A" | "B" | "C" | "D";
-export type Dimension = "acquisition" | "conversion" | "retention" | "data";
-export type AnswerValue = string | boolean | number;
-
-type DiagnoseState = {
-  step: StepKey;
+type State = {
   stepIndex: number;
-  answers: Record<string, AnswerValue>;
+  answers: Record<Dimension, number>;
+  result: Result | null;
 
-  scores: Record<Dimension, number>;
-  riskFlags: string[];
-  tier: Tier | null;
-  primaryLeak: Dimension | null;
-
-  setAnswer: (id: string, value: AnswerValue) => void;
-  next: () => void;
-  back: () => void;
-  compute: () => void;
-  reset: () => void;
+  answerAndNext: (dimension: Dimension, score: number) => void;
+  calculate: () => void;
 };
 
-/* ============================
-   FLOW
-============================ */
-
-const steps: StepKey[] = [
-  "context",
-  "system",
-  "friction",
-  "decision",
-  "result",
-  "lead_capture",
-];
-
-const initialScores: Record<Dimension, number> = {
-  acquisition: 0,
-  conversion: 0,
-  retention: 0,
-  data: 0,
-};
-
-/* ============================
-   STORE
-============================ */
-
-export const useDiagnoseStore = create<DiagnoseState>((set, get) => ({
-  step: "context",
+export const useDiagnoseStore = create<State>((set, get) => ({
   stepIndex: 0,
   answers: {},
+  result: null,
 
-  scores: { ...initialScores },
-  riskFlags: [],
-  tier: null,
-  primaryLeak: null,
-
-  setAnswer: (id, value) => {
+  answerAndNext: (dimension, score) =>
     set((state) => ({
-      answers: { ...state.answers, [id]: value },
-    }));
-  },
+      answers: { ...state.answers, [dimension]: score },
+      stepIndex: state.stepIndex + 1,
+    })),
 
-  next: () => {
-    const nextIndex = Math.min(get().stepIndex + 1, steps.length - 1);
-    set({
-      stepIndex: nextIndex,
-      step: steps[nextIndex],
-    });
-  },
+  calculate: () => {
+    const scores = Object.values(get().answers);
+    const totalScore = scores.reduce((a, b) => a + b, 0);
 
-  back: () => {
-    const prevIndex = Math.max(get().stepIndex - 1, 0);
-    set({
-      stepIndex: prevIndex,
-      step: steps[prevIndex],
-    });
-  },
+    let tier: Result["tier"] = "D";
+    if (totalScore >= 14) tier = "A";
+    else if (totalScore >= 10) tier = "B";
+    else if (totalScore >= 6) tier = "C";
 
-  compute: () => {
-    const { answers } = get();
-    const scores = { ...initialScores };
-    const riskFlags: string[] = [];
-
-    const acq = answers["q_acq_main"];
-    if (acq === "paid_controlled") scores.acquisition += 2;
-    if (acq === "paid_uncontrolled") {
-      scores.acquisition += 1;
-      riskFlags.push("Tráfego pago sem controlo de CAC.");
-    }
-    if (acq === "organic" || acq === "referral") scores.acquisition += 1;
-    if (acq === "whatsapp_only")
-      riskFlags.push("Dependência excessiva de WhatsApp.");
-
-    if (answers["q_tracking"] === true) scores.data += 2;
-    else riskFlags.push("Sem tracking de conversões.");
-
-    if (answers["q_knows_cac"] !== true)
-      riskFlags.push("Não conhece CAC/CPA.");
-
-    const offer = Number(answers["q_offer_clarity"] ?? 0);
-    if (offer >= 4) scores.conversion += 2;
-    else if (offer >= 2) scores.conversion += 1;
-    else riskFlags.push("Oferta pouco clara.");
-
-    const ret = answers["q_retention"];
-    if (ret === "strong") scores.retention += 2;
-    if (ret === "some") scores.retention += 1;
-    if (ret === "none")
-      riskFlags.push("Sem retenção ou recorrência.");
-
-    const dims: Dimension[] = [
-      "acquisition",
-      "conversion",
-      "retention",
-      "data",
-    ];
-
-    const primaryLeak = dims.reduce((lowest, dim) =>
-      scores[dim] < scores[lowest] ? dim : lowest,
-      dims[0]
-    );
-
-    const total = dims.reduce((sum, d) => sum + scores[d], 0);
-
-    let tier: Tier = "D";
-    if (total >= 7) tier = "C";
-    if (total >= 11) tier = "B";
-    if (total >= 15) tier = "A";
-
-    set({
-      scores,
-      riskFlags,
-      primaryLeak,
-      tier,
-      step: "result",
-      stepIndex: steps.indexOf("result"),
-    });
-  },
-
-  reset: () => {
-    set({
-      step: "context",
-      stepIndex: 0,
-      answers: {},
-      scores: { ...initialScores },
-      riskFlags: [],
-      tier: null,
-      primaryLeak: null,
-    });
+    set({ result: { totalScore, tier } });
   },
 }));
