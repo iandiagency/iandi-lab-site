@@ -1,25 +1,13 @@
 type EventParams = Record<string, any>;
 
-declare global {
-  interface Window {
-    gtag?: (...args: any[]) => void;
-    fbq?: (...args: any[]) => void;
+export function trackEvent(eventName: string, params: EventParams = {}) {
+  // Meta Pixel
+  if (typeof window !== "undefined" && (window as any).fbq) {
+    (window as any).fbq("trackCustom", eventName, params);
   }
-}
 
-export function trackGA(event: string, params?: EventParams) {
-  if (typeof window !== "undefined" && window.gtag) {
-    window.gtag("event", event, params || {});
+  // Google Analytics 4
+  if (typeof window !== "undefined" && (window as any).gtag) {
+    (window as any).gtag("event", eventName, params);
   }
-}
-
-export function trackMeta(event: string, params?: EventParams) {
-  if (typeof window !== "undefined" && window.fbq) {
-    window.fbq("trackCustom", event, params || {});
-  }
-}
-
-export function track(event: string, params?: EventParams) {
-  trackGA(event, params);
-  trackMeta(event, params);
 }

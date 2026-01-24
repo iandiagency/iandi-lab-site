@@ -2,10 +2,86 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ===============================
+   BLINDAGEM GLOBAL DE LAYOUT
+   =============================== */
+
 html,
-body {
-  background-color: #0b0b0c;
-  color: white;
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
   margin: 0;
   padding: 0;
+}
+
+body {
+  background-color: #0b0b0c;
+  color: #ffffff;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Evita overlays invisíveis bloquearem clique */
+[data-overlay],
+.overlay,
+.absolute-full {
+  pointer-events: none;
+}
+
+/* ===============================
+   COMPONENTES (Tailwind layer)
+   =============================== */
+@layer components {
+  /* Header estilo Ogilvy: branco, minimal, logo centrado, menu à esquerda */
+  .site-header {
+    position: relative;
+    height: 96px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .logo-wrapper {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo {
+    height: 36px;
+    width: auto;
+    display: block;
+  }
+
+  .menu-button {
+    position: absolute;
+    left: 32px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .menu-button span {
+    width: 22px;
+    height: 2px;
+    background: #000;
+    display: block;
+  }
 }

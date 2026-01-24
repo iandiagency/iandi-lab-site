@@ -4,13 +4,15 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 
-const root = document.getElementById("root");
+import { initMetaPixel } from "@/lib/metaPixel";
 
-if (!root) {
-  throw new Error("Root element not found");
-}
+// 🔥 Inicializa o Meta Pixel UMA ÚNICA VEZ
+initMetaPixel(import.meta.env.VITE_META_PIXEL_ID);
 
-ReactDOM.createRoot(root).render(
+// Debug temporário
+console.log("PIXEL ID:", import.meta.env.VITE_META_PIXEL_ID);
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
       <App />

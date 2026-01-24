@@ -1,40 +1,87 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { Dimension } from "./questions";
+import { trackEvent } from "@/lib/meta";
+
+export type Tier = "A" | "B" | "C" | "D";
 
 type Result = {
   totalScore: number;
-  tier: "A" | "B" | "C" | "D";
+  tier: Tier;
 };
 
 type State = {
   stepIndex: number;
-  answers: Record<Dimension, number>;
+  answers: Partial<Record<Dimension, number>>;
   result: Result | null;
 
   answerAndNext: (dimension: Dimension, score: number) => void;
-  calculate: () => void;
+  reset: () => void;
 };
 
-export const useDiagnoseStore = create<State>((set, get) => ({
-  stepIndex: 0,
-  answers: {},
-  result: null,
+/**
+ * 🔒 Número REAL de steps de PERGUNTA
+ * (resultado não conta como step)
+ */
+const QUESTION_STEPS = 4; // 0–3
 
-  answerAndNext: (dimension, score) =>
-    set((state) => ({
-      answers: { ...state.answers, [dimension]: score },
-      stepIndex: state.stepIndex + 1,
-    })),
+export const useDiagnoseStore = create<State>()(
+  persist(
+    (set, get) => ({
+      stepIndex: 0,
+      answers: {},
+      result: null,
 
-  calculate: () => {
-    const scores = Object.values(get().answers);
-    const totalScore = scores.reduce((a, b) => a + b, 0);
+      answerAndNext: (dimension, score) => {
+        const { stepIndex, answers } = get();
 
-    let tier: Result["tier"] = "D";
-    if (totalScore >= 14) tier = "A";
-    else if (totalScore >= 10) tier = "B";
-    else if (totalScore >= 6) tier = "C";
+        const nextAnswers = {
+          ...answers,
+          [dimension]: score,
+        };
 
-    set({ result: { totalScore, tier } });
-  },
-}));
+        const isLastQuestionStep = stepIndex === QUESTION_STEPS - 1;
+
+        // 🔥 Se for o último step de pergunta, calcula automaticamente
+        if (isLastQuestionStep) {
+          const scores = Object.values(nextAnswers);
+          const totalScore = scores.reduce((a, b) => a + (b ?? 0), 0);
+
+          let tier: Tier = "D";
+          if (totalScore >= 14) tier = "A";
+          else if (totalScore >= 10) tier = "B";
+          else if (totalScore >= 6) tier = "C";
+
+          trackEvent("DiagnoseCompleted", {
+            tier,
+            score: totalScore,
+          });
+
+          set({
+            answers: nextAnswers,
+            result: { totalScore, tier },
+            stepIndex: stepIndex + 1, // entra no estado RESULTADO
+          });
+
+          return;
+        }
+
+        // 🔁 Steps normais
+        set({
+          answers: nextAnswers,
+          stepIndex: stepIndex + 1,
+        });
+      },
+
+      reset: () =>
+        set({
+          stepIndex: 0,
+          answers: {},
+          result: null,
+        }),
+    }),
+    {
+      name: "iandi-diagnose-store",
+    }
+  )
+);

@@ -1,62 +1,64 @@
-import { useNavigate } from "react-router-dom";
 import { useDiagnoseStore } from "./diagnoseStore";
+import { trackEvent } from "@/lib/meta";
 
 export default function ResultStep() {
-  const navigate = useNavigate();
   const result = useDiagnoseStore((s) => s.result);
+  const stepIndex = useDiagnoseStore((s) => s.stepIndex);
 
-  if (!result) return null;
+  if (!result || stepIndex < 4) return null;
 
-  const tierMessage = {
-    A: "O teu sistema apresenta previsibilidade e estrutura. O foco agora é otimizar e escalar com controlo.",
-    B: "Existe base para crescimento, mas há pontos de instabilidade que precisam de correção.",
-    C: "O crescimento atual é instável. Escalar agora aumentaria o risco e o desperdício.",
-    D: "O sistema não é previsível. Escalar neste estado gera perda direta de recursos.",
-  }[result.tier];
+  // ⚠️ Mensagem simples e segura (sem caracteres problemáticos)
+  const message = encodeURIComponent(
+    `Olá, concluí o diagnóstico da IANDI.\nResultado: Tier ${result.tier} | Score ${result.totalScore}.\nQuero avançar para a sessão estratégica.`
+  );
+
+  const whatsappUrl = `https://wa.me/244928697544?text=${message}`;
+
+  const handleWhatsAppClick = () => {
+    // Meta Pixel
+    trackEvent("DiagnoseWhatsAppClick", {
+      tier: result.tier,
+      score: result.totalScore,
+    });
+
+    // Google Analytics 4 (garante que existe)
+    if (typeof window !== "undefined" && (window as any).gtag) {
+      (window as any).gtag("event", "diagnose_whatsapp_click", {
+        event_category: "diagnose",
+        tier: result.tier,
+        score: result.totalScore,
+      });
+    }
+
+    // ✅ Redirect direto (funciona em mobile, webview e desktop)
+    window.location.href = whatsappUrl;
+  };
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center px-6">
-      <div className="w-full max-w-xl text-center space-y-8">
+    <div className="min-h-screen flex flex-col items-center justify-center text-white px-6 text-center">
+      <h1 className="text-3xl font-light mb-2">
+        Diagnóstico concluído
+      </h1>
 
-        {/* TÍTULO */}
-        <h1 className="text-4xl sm:text-5xl font-light">
-          Resultado
-        </h1>
+      <p className="text-zinc-400 mb-6">
+        Classificação: Tier {result.tier} · Score {result.totalScore}
+      </p>
 
-        {/* SCORE */}
-        <div className="space-y-2">
-          <p className="text-xl text-zinc-400">
-            Score total
-          </p>
-          <p className="text-3xl font-medium">
-            {result.totalScore}
-          </p>
-        </div>
+      <p className="text-zinc-400 max-w-md mb-10">
+        O crescimento atual depende mais de esforço individual do que de sistema.
+        Escalar agora aumentaria risco e desperdício, não resultados.
+      </p>
 
-        {/* TIER */}
-        <div className="space-y-2">
-          <p className="text-xl text-zinc-400">
-            Classificação
-          </p>
-          <p className="text-2xl font-semibold">
-            Tier {result.tier}
-          </p>
-        </div>
+      <button
+        onClick={handleWhatsAppClick}
+        className="rounded-xl border border-white/20 px-8 py-4 text-sm hover:border-white/40 transition"
+      >
+        Falar connosco no WhatsApp
+      </button>
 
-        {/* MENSAGEM CONTEXTUAL */}
-        <p className="text-zinc-400 leading-relaxed">
-          {tierMessage}
-        </p>
-
-        {/* CTA ÚNICO */}
-        <button
-          onClick={() => navigate("/next-step")}
-          className="mt-6 inline-flex items-center justify-center rounded-full bg-white text-black px-8 py-4 text-base font-medium hover:opacity-90 transition"
-        >
-          Explorar crescimento avançado
-        </button>
-
-      </div>
+      <p className="mt-4 text-xs text-zinc-500 max-w-sm">
+        Sessão estratégica por convite. Avançamos apenas se fizer sentido.
+      </p>
     </div>
   );
 }

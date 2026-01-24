@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useDiagnoseStore } from "@/diagnose/diagnoseStore";
 
 const LEAKS = [
   "Falta de previsibilidade",
@@ -53,6 +54,14 @@ const PROOF = [
 ];
 
 export default function Index() {
+  const navigate = useNavigate();
+  const resetDiagnose = useDiagnoseStore((s) => s.reset);
+
+  const startDiagnose = () => {
+    resetDiagnose();        // 🔒 regra do produto
+    navigate("/diagnose"); // entrada limpa
+  };
+
   return (
     <main className="bg-black text-white min-h-screen">
       {/* =====================================================
@@ -86,12 +95,12 @@ export default function Index() {
                 Agendar diagnóstico
               </a>
 
-              <Link
-                to="/diagnose"
-                className="text-sm text-zinc-400 hover:text-white transition"
+              <button
+                onClick={startDiagnose}
+                className="text-sm text-zinc-400 hover:text-white transition text-left"
               >
                 Ver como funciona →
-              </Link>
+              </button>
             </div>
 
             <div className="mt-12 text-[11px] uppercase tracking-[0.35em] text-zinc-600">
@@ -170,13 +179,13 @@ export default function Index() {
               <p className="mt-3 text-sm text-zinc-400">{s.desc}</p>
 
               <div className="mt-7">
-                {s.to.startsWith("/") ? (
-                  <Link
-                    to={s.to}
+                {s.to === "/diagnose" ? (
+                  <button
+                    onClick={startDiagnose}
                     className="inline-flex items-center text-sm text-zinc-400 hover:text-white transition"
                   >
                     {s.cta} <span className="ml-2">→</span>
-                  </Link>
+                  </button>
                 ) : (
                   <a
                     href={s.to}
@@ -245,7 +254,6 @@ export default function Index() {
           </div>
         </div>
       </section>
-
       {/* =====================================================
           6) CTA FINAL
       ===================================================== */}
@@ -260,35 +268,14 @@ export default function Index() {
             sistemas previsíveis.
           </p>
 
-          <a
-            href="/diagnose"
+          <button
+            onClick={startDiagnose}
             className="mt-6 inline-flex items-center justify-center rounded-xl border border-white/20 px-6 py-4 text-sm hover:border-white/40 transition"
           >
             Agendar diagnóstico
-          </a>
+          </button>
         </div>
       </section>
-
-      {/* =====================================================
-          7) FOOTER
-      ===================================================== */}
-      <footer className="border-t border-white/10 bg-black">
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col items-center gap-4 text-xs text-zinc-500 text-center">
-          <img
-            src="/iandi-lab-logo-white.png"
-            alt="IANDI Lab"
-            className="h-6 opacity-80"
-            draggable={false}
-          />
-
-          <p className="max-w-md leading-relaxed">
-            Unidade de consultoria em crescimento. Estratégia, performance e
-            sistemas previsíveis.
-          </p>
-
-          <p>© 2025 IANDI Lab</p>
-        </div>
-      </footer>
     </main>
   );
 }
