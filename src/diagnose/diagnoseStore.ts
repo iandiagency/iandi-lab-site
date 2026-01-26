@@ -19,11 +19,7 @@ type State = {
   reset: () => void;
 };
 
-/**
- * 🔒 Número REAL de steps de PERGUNTA
- * (resultado não conta como step)
- */
-const QUESTION_STEPS = 4; // 0–3
+const QUESTION_STEPS = 4;
 
 export const useDiagnoseStore = create<State>()(
   persist(
@@ -33,19 +29,25 @@ export const useDiagnoseStore = create<State>()(
       result: null,
 
       answerAndNext: (dimension, score) => {
-        const { stepIndex, answers } = get();
+        const { stepIndex, answers, result } = get();
+
+        if (result) return;
 
         const nextAnswers = {
           ...answers,
           [dimension]: score,
         };
 
-        const isLastQuestionStep = stepIndex === QUESTION_STEPS - 1;
+        const isLastStep = stepIndex === QUESTION_STEPS - 1;
 
-        // 🔥 Se for o último step de pergunta, calcula automaticamente
-        if (isLastQuestionStep) {
-          const scores = Object.values(nextAnswers);
-          const totalScore = scores.reduce((a, b) => a + (b ?? 0), 0);
+        if (isLastStep) {
+          const scores = Object.values(nextAnswers).filter(
+            (v): v is number => typeof v === "number"
+          );
+
+          if (scores.length < QUESTION_STEPS) return;
+
+          const totalScore = scores.reduce((a, b) => a + b, 0);
 
           let tier: Tier = "D";
           if (totalScore >= 14) tier = "A";
@@ -60,13 +62,12 @@ export const useDiagnoseStore = create<State>()(
           set({
             answers: nextAnswers,
             result: { totalScore, tier },
-            stepIndex: stepIndex + 1, // entra no estado RESULTADO
+            stepIndex: stepIndex + 1,
           });
 
           return;
         }
 
-        // 🔁 Steps normais
         set({
           answers: nextAnswers,
           stepIndex: stepIndex + 1,
