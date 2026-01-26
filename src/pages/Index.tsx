@@ -13,9 +13,9 @@ const LEAKS = [
 ];
 
 const PROOF = [
-  "Operações reduziram CAC em mais de 60%",
-  "Funis instáveis tornados previsíveis em semanas",
-  "Leads qualificados sem aumento de budget",
+  "Sistemas bem arquitetados reduziram CAC em mais de 60%",
+  "Funis caóticos tornaram-se previsíveis em semanas",
+  "Crescimento sem aumento de budget",
 ];
 
 const STAGES = [
@@ -29,7 +29,7 @@ const STAGES = [
   {
     badge: "ESTÁGIO 2",
     title: "IANDI Performance™",
-    desc: "Transformar tráfego num sistema previsível.",
+    desc: "Converter arquitetura em resultados previsíveis.",
   },
   {
     badge: "ESTÁGIO 3",
@@ -79,8 +79,8 @@ export default function Index() {
           </h1>
 
           <p className="mt-6 text-lg text-zinc-400">
-            Instalamos sistemas de aquisição que reduzem CAC e transformam
-            tráfego em leads previsíveis antes de qualquer escala.
+            Construímos a arquitetura de aquisição que elimina gargalos e transforma
+            crescimento em processo controlado.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row gap-4">
@@ -102,7 +102,7 @@ export default function Index() {
         </div>
       </section>
 
-      {/* ================= VAZAMENTO (DOR REAL) ================= */}
+      {/* ================= GARGALOS ================= */}
 
       <section className="border-t border-white/10">
         <div className="max-w-6xl mx-auto px-6 py-24 grid md:grid-cols-2 gap-16">
@@ -149,28 +149,18 @@ export default function Index() {
           </p>
 
           <h2 className="mt-6 text-3xl font-light max-w-2xl">
-            Modelos de atuação adaptados ao estágio do teu crescimento.
+            Crescimento exige intervenções diferentes em cada fase.
           </h2>
 
           <p className="mt-6 text-zinc-400 max-w-2xl">
-            Não acreditamos em soluções universais. Cada negócio exige um nível
-            diferente de intervenção.
+            Não existem soluções universais. Existe arquitetura certa para cada estágio.
           </p>
 
           <div className="mt-6 text-zinc-400 space-y-2">
             <p>Algumas empresas precisam de clareza.</p>
-            <p>Outras precisam de performance.</p>
+            <p>Outras precisam de previsibilidade.</p>
             <p>Outras precisam de escala.</p>
           </div>
-
-          <p className="mt-6 text-zinc-400">
-            O IANDI Lab atua de forma diferente em cada estágio.
-          </p>
-
-          <p className="mt-12 text-zinc-400 max-w-xl">
-            É por isso que estruturámos o crescimento em estágios claros —
-            cada um resolve um bloqueio específico.
-          </p>
 
         </div>
       </section>
@@ -216,7 +206,7 @@ export default function Index() {
             </h2>
 
             <p className="mt-6 text-zinc-400">
-              Um sistema de decisão que reduz incerteza e maximiza retorno.
+              Decisão certa antes de tráfego, antes de escala, antes de budget.
             </p>
           </div>
 
@@ -242,7 +232,7 @@ export default function Index() {
           </h2>
 
           <p className="mt-4 text-zinc-400 max-w-2xl">
-            Antes de investir mais em tráfego, identifica exatamente o que está a travar o crescimento.
+            Antes de investir mais, identifica exatamente o que está a travar o crescimento.
           </p>
 
           <button
